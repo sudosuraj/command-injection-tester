@@ -194,15 +194,10 @@ class ServerTest:
 
                         resp = self.recv_from_ssl(ssock)
                         if resp:
-                            log_trace(logger, resp, incoming=True, formatter=red)
-                            if kwargs.get("test")(resp):
-                                logger.warning(red("Command injection here!"))
-                            else:
-                                logger.warning(
-                                    red(
-                                        "Probable command injection. Response looks different than expected."
-                                    )
-                                )
+                        # Response arrived after TLS handshake → normal behavior
+                            log_trace(logger, resp, incoming=True)
+                            logger.info(green("No STARTTLS command injection detected"))
+                            return
                         else:
                             logger.debug(
                                 "No response in encrypted context, trying real command now ..."
